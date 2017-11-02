@@ -1,11 +1,14 @@
 {
   "name": "metalsmith-simple-includes",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Simple include mechanism for Metalsmith",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Andy Burke (andy.burke@mailbox.earth)",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "minimatch": "^3.0.4"
+  }
 }

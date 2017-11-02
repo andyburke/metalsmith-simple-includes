@@ -17,8 +17,9 @@ const includes = require( 'metalsmith-simple-includes' );
 
 Metalsmith( __dirname )
     .use( includes( {
-        pattern: '^#include <(.*?)>', // default include directive pattern
-        directory: ''                 // default includes directory
+        directive: '^#include <(.*?)>', // default include directive pattern
+        directory: '',                  // default includes directory
+        pattern: '*.html'               // default file pattern to process for include directives
     } ) )
     .build( error => {
         if ( error ) {
@@ -37,8 +38,9 @@ Metalsmith( __dirname )
 {
   "plugins": {
     "metalsmith-simple-includes": {
-      "pattern": "^#include <(.*?)>",
-      "directory": ""
+      "directive": "^#include <(.*?)>",
+      "directory": "",
+      "pattern": "*.html"
     }
   }
 }
@@ -46,8 +48,9 @@ Metalsmith( __dirname )
 
 ## Options
 
-- `pattern` is the regular expression for the include directive
+- `directive` is the regular expression for the include directive
 - `directory` is the base directory for your included files
+- `pattern` is a glob pattern for filenames to process for include directives
 
 ## License
 

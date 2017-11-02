@@ -1,15 +1,18 @@
-const fs = require( 'fs' );
 const extend = require( 'extend' );
+const fs = require( 'fs' );
+const match = require( 'minimatch' );
 
 /**
  * @param {Object} options
- * @param {String} options.pattern is the pattern for the include directive, default: '^#include <(.*?)>'
+ * @param {String} options.directive is the pattern for the include directive, default: '^#include <(.*?)>'
  * @param {String} options.directory is the default includes directory
+ * @param {String} options.pattern is the glob pattern for matching files to process, default: *.html
  */
 module.exports = function( _options ) {
     const options = extend( {
-        pattern: '^#include <(.*?)>',
-        directory: ''
+        directive: '^#include <(.*?)>',
+        directory: '',
+        pattern: '*.html'
     }, _options );
 
     const include_expression = new RegExp( options.pattern, 'gmi' );
@@ -17,7 +20,8 @@ module.exports = function( _options ) {
     const includes_cache = {};
 
     return ( files, metalsmith, done ) => {
-        Object.values( files ).forEach( file => {
+        Object.keys( files ).filter( filename => match( filename, options.pattern ) ).forEach( filename => {
+            const file = files[ filename ];
             file.contents = file.contents.toString().replace( include_expression, ( match, path ) => {
                 const absolute_path = metalsmith.path( options.directory, path );
                 includes_cache[ path ] = includes_cache[ path ] || fs.readFileSync( absolute_path ).toString( 'utf8' );
