@@ -17,17 +17,34 @@ module.exports = function( _options ) {
 
     const include_directive = new RegExp( options.directive, 'gmi' );
 
-    const includes_cache = {};
-
     return ( files, metalsmith, done ) => {
-        Object.keys( files ).filter( filename => match( filename, options.pattern ) ).forEach( filename => {
-            const file = files[ filename ];
-            file.contents = file.contents.toString().replace( include_directive, ( match, path ) => {
-                const absolute_path = metalsmith.path( options.directory, path );
-                includes_cache[ path ] = includes_cache[ path ] || fs.readFileSync( absolute_path ).toString( 'utf8' );
+
+        const includes_cache = {};
+
+        function include( path ) {
+            if ( includes_cache[ path ] ) {
                 return includes_cache[ path ];
+            }
+
+            const absolute_path = metalsmith.path( options.directory, path );
+
+            const contents = fs.readFileSync( absolute_path ).toString( 'utf8' );
+            const resolved = contents.replace( include_directive, ( match, include_path ) => {
+                return include( include_path );
             } );
-        } );
+
+            includes_cache[ path ] = resolved;
+            return includes_cache[ path ];
+        }
+
+        Object.keys( files )
+            .filter( filename => match( filename, options.pattern ) )
+            .forEach( filename => {
+                const file = files[ filename ];
+                file.contents = file.contents.toString().replace( include_directive, ( match, path ) => {
+                    return include( path );
+                } );
+            } );
 
         done();
     };

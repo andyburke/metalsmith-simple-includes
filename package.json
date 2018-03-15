@@ -1,6 +1,6 @@
 {
   "name": "metalsmith-simple-includes",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Simple include mechanism for Metalsmith",
   "main": "index.js",
   "scripts": {
